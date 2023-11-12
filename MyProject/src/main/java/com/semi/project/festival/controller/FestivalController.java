@@ -54,7 +54,6 @@ public class FestivalController {
 		return service.getFestivalByName(filterValue);
 	}
 
-
 	// 실시간 인기축제 요청(비동기)
 	@GetMapping("/populer")
 	@ResponseBody
@@ -63,6 +62,10 @@ public class FestivalController {
 		return service.getFestivalByName(ftvname);
 	}
 
+//	// 축제 번호 조회
+//	@GetMapping("/ftvNum")
+//	@ResponseBody
+//	public int getFtvNum(@RequestBody )
 
 }
 

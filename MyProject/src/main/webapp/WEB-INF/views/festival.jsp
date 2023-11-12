@@ -4,7 +4,7 @@ pageEncoding="UTF-8" %> <%@ include file="./include/header.jsp" %>
 <!DOCTYPE html>
 <html>
   <head>
-    <script src="./jquery-3.4.1.min.js"></script>
+    <!-- <script src="./jquery-3.4.1.min.js"></script> -->
     <meta charset="UTF-8" />
     <title>Insert title here</title>
   </head>
@@ -14,7 +14,161 @@ pageEncoding="UTF-8" %> <%@ include file="./include/header.jsp" %>
       /* background-image: url(); */
       /* background: url(MyProject\src\main\webapp\resources\static\img\mountain.jpg);
       background-size: cover; */
-      height: 900px;
+        height: 900px;
+        width: 100%;
+        margin: 0;
+        overflow: hidden;
+        -ms-overflow-style: none;
+      }
+
+      ::-webkit-scrollbar {
+        display: none;
+      }
+
+      body>#wrap {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        text-align: center;
+
+        /* justify-content: space-around;*/
+        margin-top: 5px;
+        margin-bottom: 5px;
+        /* vertical-align: middle; */
+        /* align-content: space-around; */
+      }
+
+      body>#wrap>#wrap2 {
+        position: absolute;
+        top: 1px;
+        left: 570px;
+        display: flex;
+        flex-direction: row;
+        margin-top: 2px;
+        margin-bottom: 3px;
+        z-index: 10;
+      }
+
+      /* 지도 영역 */
+      body>#wrap>.map-area {
+        position: absolute;
+        top: 50px;
+        flex-direction: row;
+        width: 2200px;
+        height: 100%;
+        margin-bottom: 10px;
+      }
+
+      body>#wrap #map {
+        /* display: inline-block; */
+        width: 100%;
+        height: 100%;
+
+        z-index: 1;
+      }
+
+      /*버튼 정렬 */
+      .btn-area {
+        text-align: center;
+        justify-content: center;
+        /* align-content: space-around;
+      z-index: 10; */
+      }
+
+      .btn-area>.spring-select {
+        position: relative;
+        right: 100px;
+        display: flex;
+        width: 535px;
+        justify-content: space-between;
+      }
+
+
+      .btn-area>.del-area {
+        position: relative;
+        right: 130px;
+        display: flex;
+        /* width: 535px; */
+        justify-content: space-between;
+      }
+
+      /* 버튼 스타일 */
+      .custom-btn {
+        display: inline-block;
+        width: 100px;
+        border: none;
+        height: 40px;
+        color: #fff;
+        border-radius: 10px;
+        padding: 10px 25px;
+        font-family: 'Lato', sans-serif;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        display: inline-block;
+        box-shadow: inset 2px 2px 2px 0px rgba(255, 255, 255, 0.5),
+          7px 7px 20px 0px rgba(0, 0, 0, 0.1), 4px 4px 5px 0px rgba(0, 0, 0, 0.1);
+        outline: none;
+        transition: 0.5s;
+        background-size: 200% auto;
+        color: white;
+        box-shadow: 10 0 20px #f0ecec;
+        background-image: linear-gradient(to right,
+            #457acf 0%,
+            #83bad1 51%,
+            #a1c4fd 100%);
+      }
+
+      .custom-btn:hover {
+        background-position: right center;
+      }
+
+      .del-btn {
+        width: 100px;
+        height: 40px;
+        color: #fff;
+        border-radius: 5px;
+        padding: 10px 10px;
+        font-family: 'Lato', sans-serif;
+        font-weight: 500;
+        background: transparent;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        display: inline-block;
+        box-shadow: inset 2px 2px 2px 0px rgba(255, 255, 255, 0.5),
+          7px 7px 20px 0px rgba(0, 0, 0, 0.1), 4px 4px 5px 0px rgba(0, 0, 0, 0.1);
+        outline: none;
+      }
+
+      .btn-16 {
+        border: none;
+        color: #000;
+      }
+
+      .btn-16:after {
+        position: absolute;
+        content: '';
+        width: 0;
+        height: 100%;
+        top: 0;
+        left: 0;
+        direction: rtl;
+        z-index: -1;
+        box-shadow: -7px -7px 20px 0px #fff9, -4px -4px 5px 0px #fff9,
+          7px 7px 20px 0px #0002, 4px 4px 5px 0px #0001;
+        transition: all 0.3s ease;
+      }
+
+      /* .btn-16:hover {
+      color: #000;
+    }
+    .btn-16:hover:after {
+      left: auto;
+      right: 0;
       width: 100%;
       margin: 0;
       overflow: hidden;
@@ -1118,6 +1272,17 @@ pageEncoding="UTF-8" %> <%@ include file="./include/header.jsp" %>
           }
         });
       });
+      Kakao.init('a5c28d99bb31ae88bf5a825a4fd77ac6'); // 사용하려는 앱의 JavaScript 키 입력
+    </script>
+        
+      <script>
+
+        //댓글 등록 
+        window.onload = function () {
+
+          document.getElementById('replyregist').onclick = () => {
+            console.log('댓글 등록 이벤트 발생!');
+          }}
 
       //줌 전역으로?
       //폴리곤 표시
@@ -1582,8 +1747,7 @@ pageEncoding="UTF-8" %> <%@ include file="./include/header.jsp" %>
                               .setAttribute('href', data[i].url);
                             document.getElementById('modalY').textContent =
                               '축제 상세보기';
-
-                            $('#testModal').modal('show');
+                              document.getElementById('testModal').style.display = 'block';
                           }
                         ); // 마커 클릭 이벤트 끝
                       }
@@ -1704,7 +1868,7 @@ pageEncoding="UTF-8" %> <%@ include file="./include/header.jsp" %>
                       document.getElementById('modalY').textContent =
                         '축제 상세보기';
 
-                      $('#testModal').modal('show');
+                        document.getElementById('testModal').style.display = 'block';
 
                       // overlay.setMap(map);
                       getFtvNum = data[i].ftvNum;
@@ -1800,7 +1964,7 @@ pageEncoding="UTF-8" %> <%@ include file="./include/header.jsp" %>
                       document.getElementById('modalY').textContent =
                         '축제 상세보기';
 
-                      $('#testModal').modal('show');
+                        document.getElementById('testModal').style.display = 'block';
                     });
 
                     // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
@@ -1891,7 +2055,7 @@ pageEncoding="UTF-8" %> <%@ include file="./include/header.jsp" %>
                       document.getElementById('modalY').textContent =
                         '축제 상세보기';
 
-                      $('#testModal').modal('show');
+                        document.getElementById('testModal').style.display = 'block';
                     });
 
                     // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
@@ -1982,7 +2146,7 @@ pageEncoding="UTF-8" %> <%@ include file="./include/header.jsp" %>
                       document.getElementById('modalY').textContent =
                         '축제 상세보기';
 
-                      $('#testModal').modal('show');
+                        document.getElementById('testModal').style.display = 'block';
                     });
 
                     // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
