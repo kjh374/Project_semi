@@ -57,4 +57,38 @@
 		ON fl.ftv_num = f.ftv_num
 		WHERE user_id = #{userId}
 	</select>
+	
+	<delete id="likedelete">
+		DELETE FROM ftv_like
+		WHERE ftv_num = #{ftvNum}
+		AND user_id = #{userId}
+	</delete>
+	
+	<!-- 좋아요 기능 -->
+	
+	<select id="searchLike" resultType="int">
+		SELECT COUNT(*) FROM ftv_like
+		WHERE ftv_num = #{ftvNum}
+		AND user_id = #{userId}
+	</select>
+	
+	<insert id="createLike">
+		INSERT INTO ftv_like
+		VALUES (seq_like_num.NEXTVAL, #{ftvNum}, #{userId})
+	</insert>
+	
+	<delete id="deleteLike">
+		DELETE FROm ftv_like
+		WHERE ftv_num = #{ftvNum}
+		AND user_id = #{userId}
+	</delete>
+	
 </mapper>
+
+
+
+
+
+
+
+

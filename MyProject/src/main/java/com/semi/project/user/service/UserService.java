@@ -1,22 +1,17 @@
 package com.semi.project.user.service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpSession;
-
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitterReturnValueHandler;
 
 import com.semi.project.festival.dto.FtvResponseDTO;
 import com.semi.project.festival.dto.ReplyResponseDTO;
 import com.semi.project.festival.entity.Festival;
 import com.semi.project.user.dto.RequestDTO;
 import com.semi.project.user.dto.ResponseDTO;
-import com.semi.project.user.dto.likeDTO;
 import com.semi.project.user.entity.User;
 import com.semi.project.user.mapper.IUserMapper;
 
@@ -94,11 +89,16 @@ public class UserService {
 		return mapper.getEmail(email);
 	}
 
-	public void registFtvLike(likeDTO dto) {
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("userId", dto.getUserId());
-		map.put("ftvNum", dto.getFtvNum());
-		mapper.registFtvLike(map);		
+
+	// 좋아요 요청, 취소
+	public String likeDelete(Map<String, String> params) {
+		if(mapper.searchLike(params) == 0) {
+			mapper.createLike(params);
+			return "like";
+		} else {
+			mapper.deleteLike(params);
+			return "delete";
+		}
 	}
 }
 
