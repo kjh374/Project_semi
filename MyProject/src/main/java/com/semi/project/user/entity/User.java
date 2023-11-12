@@ -20,8 +20,6 @@ public class User {
 	private String email;
 	private String name;
 	
-	// 좋아요 개수 몇 개인지 알려주는 변수.
-	private int likeCnt;
 
 }
 
