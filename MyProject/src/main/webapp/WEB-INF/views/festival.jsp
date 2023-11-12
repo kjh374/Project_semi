@@ -30,6 +30,7 @@
         /* background-image: url(); */
         /* background: url(MyProject\src\main\webapp\resources\static\img\mountain.jpg);
       background-size: cover; */
+
         height: 900px;
         width: 100%;
         margin: 0;
@@ -1029,8 +1030,9 @@
           <div class="link-inner">
             <a
               href="##"
-              class="glyphicon-thumbs-up"
-              ><i class="glyphicon glyphicon-thumbs-up"></i>좋아요</a
+              class="likeSelect"
+              id="likeSelect"
+              >좋아요<img class="likeSelect" id="likeSelectImg" src="${pageContext.request.contextPath}/img/like.png"></img></a
             >
             <!-- src\main\webapp\resources\static\img\like.png -->
 
@@ -1137,9 +1139,49 @@
         
       <script>
 
-        //댓글 등록 
-        window.onload = function () {
 
+
+      // 지도를 표시할 div와  지도 옵션으로  지도를 생성합니다
+      let map = new kakao.maps.Map(mapContainer, mapOption),
+        customOverlay = new kakao.maps.CustomOverlay({});
+
+      // 주소-좌표 변환 객체를 생성합니다
+      var geocoder = new kakao.maps.services.Geocoder();
+
+      // 지도 확대 축소를 제어할 수 있는  줌 컨트롤을 생성합니다
+      var zoomControl = new kakao.maps.ZoomControl();
+      map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
+
+      //1. 시도 json 읽어오기
+      var jsonLocation = '/resources/external_json/sido.json';
+
+      let detailMode = false; // level에 따라 다른 json 파일 사용
+      let level = '';
+      let polygons = [];
+      // var polygonPath = [];
+      var points = [];
+      // 지도 클릭시 색상 변경
+      let colorflag = false;
+      let moveflag = false;
+      let getFtvNum; // 축제번호
+      let likeftvNum = []; // 좋아요 번호
+
+      // init('json/sido.json');
+      $.getJSON(jsonLocation, function (data) {
+        var data = data.features;
+        var coordinates = [];
+        var name = '';
+        $.each(data, function (i, val) {
+          if (val.geometry.type == 'Polygon') {
+            coordinates = val.geometry.coordinates;
+            name = val.properties.SIG_KOR_NM;
+
+            displayArea(coordinates, name); // 호출!!
+          }
+        });
+      });
+                  //댓글 등록 
+        window.onload = function () {
           document.getElementById('replyregist').onclick = () => {
             console.log('댓글 등록 이벤트 발생!');
 
@@ -1708,7 +1750,33 @@
 
                             $('#testModal').modal('show');
                           }
-                        ); // 마커 클릭 이벤트 끝
+                          ); // 마커 클릭 이벤트 끝
+
+                          // 좋아요 여부 이벤트
+                          kakao.maps.event.addListener(
+                          marker,
+                          'click',
+                          function () {
+                            fetch('${pageContext.request.contextPath}/user/likeList/' + userIdVal)
+                                .then((res) => res.json())
+                                .then((list) => {
+                                  likeftvNum = [];
+                                  for (likeList of list) {
+                                    likeftvNum.push(likeList.ftvNum);
+                                  }
+                                })
+                                if (!likeftvNum.includes(getFtvNum)) {
+                                      document.getElementById('likeSelectImg').setAttribute(
+                                        'src',
+                                        '${pageContext.request.contextPath}/img/like.png'
+                                      )
+                                    } else {
+                                      document.getElementById('likeSelectImg').setAttribute(
+                                        'src',
+                                        '${pageContext.request.contextPath}/img/likeDarker.png'
+                                      )
+                                    }
+                            });
                       }
                     }
                   );
@@ -1742,7 +1810,7 @@
       // 지도에 표시된 마커 객체를 가지고 있을 배열입니다
       // var markers = [];
       var marker;
-      let getFtvNum; // 축제번호
+
 
       var content = '';
       //계절버튼 클릭 이벤트
@@ -1830,8 +1898,37 @@
                       $('#testModal').modal('show');
 
                       // overlay.setMap(map);
+                      
                       getFtvNum = data[i].ftvNum;
                     });
+
+                          // 좋아요 여부 이벤트
+                          kakao.maps.event.addListener(
+                          marker,
+                          'click',
+                          function () {
+                            fetch('${pageContext.request.contextPath}/user/likeList/' + userIdVal)
+                                .then((res) => res.json())
+                                .then((list) => {
+                                  console.log(list);
+                                  likeftvNum = [];
+                                  for (likeList of list) {
+                                    likeftvNum.push(likeList.ftvNum);
+                                  }
+                                  console.log('likeList: ', likeftvNum);
+                                })
+                                if (!likeftvNum.includes(getFtvNum)) {
+                                      document.getElementById('likeSelectImg').setAttribute(
+                                        'src',
+                                        '${pageContext.request.contextPath}/img/like.png'
+                                      )
+                                    } else {
+                                      document.getElementById('likeSelectImg').setAttribute(
+                                        'src',
+                                        '${pageContext.request.contextPath}/img/likeDarker.png'
+                                      )
+                                    }
+                            });
 
                     // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
                     // map.setCenter(coords);
@@ -1898,7 +1995,6 @@
                     // 마커를 클릭했을 때 커스텀 오버레이를 표시합니다
                     kakao.maps.event.addListener(marker, 'click', function () {
                       console.log('클릭한 마커의 번호: ', data[i].ftvNum);
-
                       document.getElementById('exampleModalLabel').textContent =
                         data[i].ftvName;
                       document.getElementById('date').textContent =
@@ -1926,6 +2022,31 @@
                       $('#testModal').modal('show');
                     });
 
+                          // 좋아요 여부 이벤트
+                          kakao.maps.event.addListener(
+                          marker,
+                          'click',
+                          function () {
+                            fetch('${pageContext.request.contextPath}/user/likeList/' + userIdVal)
+                                .then((res) => res.json())
+                                .then((list) => {
+                                  likeftvNum = [];
+                                  for (likeList of list) {
+                                    likeftvNum.push(likeList.ftvNum);
+                                  }
+                                })
+                                if (!likeftvNum.includes(getFtvNum)) {
+                                      document.getElementById('likeSelectImg').setAttribute(
+                                        'src',
+                                        '${pageContext.request.contextPath}/img/like.png'
+                                      )
+                                    } else {
+                                      document.getElementById('likeSelectImg').setAttribute(
+                                        'src',
+                                        '${pageContext.request.contextPath}/img/likeDarker.png'
+                                      )
+                                    }
+                            });
                     // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
                     // map.setCenter(coords);
                     // 생성된 마커를 배열에 추가합니다
@@ -1989,7 +2110,6 @@
                     // 마커를 클릭했을 때 커스텀 오버레이를 표시합니다
                     kakao.maps.event.addListener(marker, 'click', function () {
                       console.log('클릭한 마커의 번호: ', data[i].ftvNum);
-
                       document.getElementById('exampleModalLabel').textContent =
                         data[i].ftvName;
                       document.getElementById('date').textContent =
@@ -2016,6 +2136,31 @@
 
                       $('#testModal').modal('show');
                     });
+                          // 좋아요 여부 이벤트
+                          kakao.maps.event.addListener(
+                          marker,
+                          'click',
+                          function () {
+                            fetch('${pageContext.request.contextPath}/user/likeList/' + userIdVal)
+                                .then((res) => res.json())
+                                .then((list) => {
+                                  likeftvNum = [];
+                                  for (likeList of list) {
+                                    likeftvNum.push(likeList.ftvNum);
+                                  }
+                                })
+                                if (!likeftvNum.includes(getFtvNum)) {
+                                      document.getElementById('likeSelectImg').setAttribute(
+                                        'src',
+                                        '${pageContext.request.contextPath}/img/like.png'
+                                      )
+                                    } else {
+                                      document.getElementById('likeSelectImg').setAttribute(
+                                        'src',
+                                        '${pageContext.request.contextPath}/img/likeDarker.png'
+                                      )
+                                    }
+                            });
 
                     // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
                     // map.setCenter(coords);
@@ -2080,7 +2225,6 @@
                     // 마커를 클릭했을 때 커스텀 오버레이를 표시합니다
                     kakao.maps.event.addListener(marker, 'click', function () {
                       console.log('클릭한 마커의 번호: ', data[i].ftvNum);
-
                       document.getElementById('exampleModalLabel').textContent =
                         data[i].ftvName;
                       document.getElementById('date').textContent =
@@ -2107,6 +2251,31 @@
 
                       $('#testModal').modal('show');
                     });
+                          // 좋아요 여부 이벤트
+                          kakao.maps.event.addListener(
+                          marker,
+                          'click',
+                          function () {
+                            fetch('${pageContext.request.contextPath}/user/likeList/' + userIdVal)
+                                .then((res) => res.json())
+                                .then((list) => {
+                                  likeftvNum = [];
+                                  for (likeList of list) {
+                                    likeftvNum.push(likeList.ftvNum);
+                                  }
+                                })
+                                if (!likeftvNum.includes(getFtvNum)) {
+                                      document.getElementById('likeSelectImg').setAttribute(
+                                        'src',
+                                        '${pageContext.request.contextPath}/img/like.png'
+                                      )
+                                    } else {
+                                      document.getElementById('likeSelectImg').setAttribute(
+                                        'src',
+                                        '${pageContext.request.contextPath}/img/likeDarker.png'
+                                      )
+                                    }
+                            });
 
                     // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
                     // map.setCenter(coords);
@@ -2147,35 +2316,64 @@
         };
       }
 
-      let userIdVal = '${login}';
-      document.querySelector('.link-inner').addEventListener('click', (e) => {
-        e.preventDefault();
-        // console.log(userIdVal);
-        if (e.target.matches('.glyphicon-thumbs-up')) {
-          if (userIdVal === null) {
-            console.log('login: ', userIdVal);
-            alert('로그인이 필요합니다.');
-            return;
-          }
+      // 좋아요 관련 함수
+      const $likeSelete = document.querySelector('.likeSelect');
+      const $likeClose = document.querySelector('.close');
 
-          console.log('getFtvNum: ', getFtvNum);
-          fetch('${pageContext.request.contextPath}/user/likeList', {
-            method: 'post',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              userId: userIdVal,
-              ftvNum: getFtvNum,
-            }),
-          })
-            .then((res) => res.text())
-            .then((data) => {
-              if (data) {
-                alert('좋아요를 눌렀습니다!');
-              }
-              console.log('data: ', data);
-            });
+
+
+      $likeSelete.addEventListener('click', (e) => {
+        e.preventDefault();
+        console.log('좋아요 버튼 클릭!');
+
+
+
+        if (userIdVal === '') {
+          alert('로그인이 필요합니다.');
+          return;
         }
+
+
+        fetch('${pageContext.request.contextPath}/user/like', {
+          method: 'post',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userId: userIdVal,
+            ftvNum: getFtvNum,
+          }),
+        })
+          .then((res) => res.text())
+          .then((data) => {
+            if (data === 'like') {
+
+                document.getElementById('likeSelectImg').setAttribute(
+                  'src',
+                  '${pageContext.request.contextPath}/img/likeDarker.png'
+                );
+                document.getElementById('likeSelect').setAttribute(
+                  'src',
+                  '${pageContext.request.contextPath}/img/likeDarker.png'
+                ); 
+
+            } else {
+              document.getElementById('likeSelectImg').setAttribute(
+                  'src',
+                  '${pageContext.request.contextPath}/img/like.png'
+                );
+                document.getElementById('likeSelect').setAttribute(
+                'src',
+                '${pageContext.request.contextPath}/img/like.png'
+              );
+
+            }
+
+          });
       });
+    
+      // 좋아요 리스트 구현
+
     </script>
   </body>
 </html>

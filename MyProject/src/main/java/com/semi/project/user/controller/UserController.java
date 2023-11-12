@@ -1,6 +1,7 @@
 package com.semi.project.user.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
@@ -8,6 +9,7 @@ import org.springframework.context.annotation.Description;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -144,20 +146,20 @@ public class UserController {
 		}
 		
 		
-	//좋아요 목록 저장(비동기)
-	@PostMapping("/likeList")
+	// 좋아요 확인, 취소
+	@PostMapping("/like")
 	@ResponseBody
-	public String registFtvLike(@RequestBody likeDTO dto) {
-		log.info("userId: {}, ftvNum: {}", dto.getUserId(), dto.getFtvNum());
-		service.registFtvLike(dto);
-		if (dto.getUserId() != null) {
-			return "true";
-		} else {
-			return "false";
-		}
-		
-	// 
-		
+	public String likeDelete(@RequestBody Map<String, String> params) {
+		log.info("/like: POST, params: {}", params);
+		return service.likeDelete(params);
 	}
-
+		
+	
+	
 }
+	
+	
+	
+	
+	
+
