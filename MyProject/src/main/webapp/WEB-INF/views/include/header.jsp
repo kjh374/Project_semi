@@ -217,9 +217,11 @@
         }
 
         .modal-header {
+          border: 1px solid;
           font-size: 20px;
           padding: 20px;
-          background: skyblue;
+          background: white;
+          color: #000;
         }
 
         .modal-con .con {
@@ -247,6 +249,9 @@
 
         .portal {
           font-size: 15px;
+        }
+        .close-area {
+          margin-left: 243px;
         }
         
       </style>
@@ -285,11 +290,7 @@
     <div id="modal"></div>
     <div class="modal-con modal1">
       <div class="modal-header">
-        <a
-          href="#"
-          class="portal"
-          >검색</a
-        >
+
         <button
           type="button"
           class="close-area"
@@ -305,15 +306,7 @@
         <!-- 페이징 목록 -->
         <div class="board_list_wrap">
           <div class="board_list">
-            <c:forEach var="num" begin="${pc.begin}" end="${pc.end}">
-              <div class="ftv">
-                <div class="num">${num}</div>
-                <div class="modal_title"><a href="#">${ftvName}</a></div>
-                <a href="#">
-                  <div class="likeBtn">♡</div>
-                </a>
-              </div>
-            </c:forEach>
+
           </div>
         </div>
       </div>
@@ -326,101 +319,7 @@
     <div></div>
 
     <script>
-      function openModal(modalname) {
-        $('#modal').fadeIn(300);
-        $('.' + modalname).fadeIn(300);
-        document.querySelector('.modal1').style.zIndex = '10';
-      }
-
-      $('#modal, .close-area').on('click', function () {
-        $('#modal').fadeOut(300);
-        $('.modal1').fadeOut(300);
-      });
-
-      const userIdVal = '${login}';
-      let str = ''; // 좋아요 리스트 불러 올 변수
-      // 좋아요 리스트 구현
-      const $likeBtn = document.querySelector('.like');
-      // 가상의 데이터 배열
-
-      // 보여줄 아이템 개수
-      const itemsPerPage = 1;
-
-      // 현재 페이지
-
-      let currentPage = 1;
-
-      // 컨테이너 엘리먼트
-      const $container = document.getElementById('contentDiv');
-      const item = document.createElement('div');
-
-      $likeBtn.addEventListener('click', (e) => {
-        console.log('좋아요 리스트 클릭', userIdVal);
-
-        fetch('${pageContext.request.contextPath}/user/likeList/' + userIdVal)
-          .then((res) => res.json())
-          .then((list) => {
-            console.log('좋아요리스트 클릭시: ', list);
-
-            for (likeList of list) {
-              str +=
-                `<!-- 축제명 -->
-                            <div class="festivalName">
-                               <strong><h4 id='ftvName'><p>` +
-                likeList.ftvName +
-                `</p></h4></strong></div>
-                                <div class="festivalPhone">
-                                <h6><p id='ftvPhone'>` +
-                likeList.phone +
-                `</p></h6></div>
-                                  <div class="festivalPlace">
-                                    <h6><p id='ftvPlace'>` +
-                likeList.place +
-                `</p></h6></div>
-                                      <div class="festivalRoad">
-                                        <h6><p id='ftvRoad'>` +
-                likeList.roadAddr +
-                `</p></h6></div>
-                                        <div class="festivalUrl">
-                                        <small><h5  id='ftvModalSty'><a href="` +
-                likeList.url +
-                `" id='ftvUrl'>
-                                          홈페이지</a></h5></small></div>
-                                          `;
-            }
-            const data = Array.from({ length: 1 }, (_, index) => str);
-            // 아이템을 생성하여 컨테이너에 추가하는 함수
-            function appendItems(page, itemsPerPage) {
-              const start = (page - 1) * itemsPerPage;
-              const end = start + itemsPerPage;
-              for (let i = start; i < end; i++) {
-                item.className = 'item';
-                $container.appendChild(item);
-                item.innerHTML = data[i];
-              }
-            }
-            // 초기 아이템 추가
-            appendItems(currentPage, itemsPerPage);
-
-            // 스크롤 이벤트 감지
-            // window.addEventListener('scroll', () => {
-            //   const currentScroll = window.scrollY;
-            //   const windowHeight = window.innerHeight;
-            //   const bodyHeight = document.body.clientHeight;
-            //   const paddingBottom = 200;
-            //   // if (
-            //   //   currentScroll + windowHeight + paddingBottom >=
-            //   //   bodyHeight - 10
-            //   // )
-            //   // {
-            //   //   // 스크롤이 바닥에 닿았을 때 새로운 아이템 추가
-            //   //   currentPage++;
-            //   //   appendItems(currentPage, itemsPerPage);
-            //   // }
-            // });
-          });
-        item.innerHTML = '';
-      });
+     
 
       const festivalNames = {
         1: '2022년 순천민주주의 정책 페스티벌',
@@ -1963,10 +1862,108 @@
         const festivalName = festivalNames[randomNumber];
         document.getElementById('festivalName').textContent = festivalName;
       }
+      showRandomFestival();
+      setInterval(showRandomFestival, 3000); // 5000 밀리초(5초)
 
       // 페이지 로딩 후 5초마다 데이터 랜덤으로 표시
-      showRandomFestival();
-      setInterval(showRandomFestival, 5000); // 5000 밀리초(5초)
+     
+      function openModal(modalname) {
+        $('#modal').fadeIn(300);
+        $('.' + modalname).fadeIn(300);
+        document.querySelector('.modal1').style.zIndex = '10';
+      }
+
+      $('#modal, .close-area').on('click', function () {
+        $('#modal').fadeOut(300);
+        $('.modal1').fadeOut(300);
+      });
+
+      const userIdVal = '${login}';
+      let strList = ''; // 좋아요 리스트 불러 올 변수
+      // 좋아요 리스트 구현
+      const $likeBtn = document.querySelector('.like');
+      // 가상의 데이터 배열
+
+      // 보여줄 아이템 개수
+      const itemsPerPage = 1;
+
+      // 현재 페이지
+
+      let currentPage = 1;
+
+      // 컨테이너 엘리먼트
+      const $container = document.getElementById('contentDiv');
+      const item = document.createElement('div');
+
+      $likeBtn.addEventListener('click', (e) => {
+        strList = '';
+        console.log('좋아요 리스트 클릭', userIdVal);
+
+        fetch('${pageContext.request.contextPath}/user/likeList/' + userIdVal)
+          .then((res) => res.json())
+          .then((list) => {
+            console.log('좋아요리스트 클릭시: ', list);
+
+            for (likeList of list) {
+              strList +=
+                `<!-- 축제명 -->
+                            <div class="festivalName">
+                               <strong><h4 id='ftvName'><p>` +
+                likeList.ftvName +
+                `</p></h4></strong></div>
+                                <div class="festivalPhone">
+                                <h6><p id='ftvPhone'>` +
+                likeList.phone +
+                `</p></h6></div>
+                                  <div class="festivalPlace">
+                                    <h6><p id='ftvPlace'>` +
+                likeList.place +
+                `</p></h6></div>
+                                      <div class="festivalRoad">
+                                        <h6><p id='ftvRoad'>` +
+                likeList.roadAddr +
+                `</p></h6></div>
+                                        <div class="festivalUrl">
+                                        <small><h5  id='ftvModalSty'><a href="` +
+                likeList.url +
+                `" id='ftvUrl'>
+                                          홈페이지</a></h5></small></div>
+                                          `;
+            }
+            const data = Array.from({ length: 1 }, (_, index) => strList);
+            // 아이템을 생성하여 컨테이너에 추가하는 함수
+            function appendItems(page, itemsPerPage) {
+              const start = (page - 1) * itemsPerPage;
+              const end = start + itemsPerPage;
+              for (let i = start; i < end; i++) {
+                item.className = 'item';
+                $container.appendChild(item);
+                item.innerHTML = data[i];
+              }
+            }
+            // 초기 아이템 추가
+            appendItems(currentPage, itemsPerPage);
+
+            // 스크롤 이벤트 감지
+            // window.addEventListener('scroll', () => {
+            //   const currentScroll = window.scrollY;
+            //   const windowHeight = window.innerHeight;
+            //   const bodyHeight = document.body.clientHeight;
+            //   const paddingBottom = 200;
+            //   // if (
+            //   //   currentScroll + windowHeight + paddingBottom >=
+            //   //   bodyHeight - 10
+            //   // )
+            //   // {
+            //   //   // 스크롤이 바닥에 닿았을 때 새로운 아이템 추가
+            //   //   currentPage++;
+            //   //   appendItems(currentPage, itemsPerPage);
+            //   // }
+            // });
+          });
+        item.innerHTML = '';
+      });
+      let str = '';
       // 헤더 랜덤 축제에 관련된 변수
       document.querySelector('.like').onclick = () => {
         fetch('${pageContext.request.contextPath}/user/likeList/' + `${login}`)
@@ -1980,6 +1977,7 @@
             document.querySelector('.ftv').insertAdjacentHTML('beforeend', str);
           });
       };
+ 
     </script>
   </body>
 </html>

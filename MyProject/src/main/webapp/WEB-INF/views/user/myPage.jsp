@@ -65,7 +65,7 @@ li.border {
     padding: 12px;
     text-decoration-line: none;
     color: #0356A9;
-    height: 48px;
+    height: 85px;
 
 }
 .aButton:hover{
@@ -210,6 +210,7 @@ table.table_type td {
   border: 1px solid #ddd;
   padding: 10px;
   border-right: none;
+  height: 31px;
 }
 .join {
   padding: 3px 6px;
@@ -336,19 +337,11 @@ div.btn_area {
                                 <input type="text" id="email" name="email" class="join" value="${userInfo.useremail}" disabled="disabled">
                                 @
                                 <input class="join" type="text" class="box" id="email1" name="email1" value="${userInfo.emailDomain}" disabled="disabled" >&nbsp;
-                                    <select type="select" class="box" id="email2" name="email2">
-                                    	<option value="type">::직접입력::</option>
-                                        <option value="naver.com">naver.com</option>
-                                        <option value="gmail.com">gmail.com</option>
-                                        <option value="daum.net">daum.net</option>
-                                    </select>&nbsp;&nbsp;
-                                    <span class="btn b_bdcheck">
-                                        <input type="button" class="btn btn_primary" id="check_btn" value="이메일 인증">
-                                    </span>
+                                 
+                          
 
                                     <div class="mail_check_box">
-                                    	<input type="text" class="form_control mail_check_input" placeholder="인증번호 6자리를 입력하세요." maxlength="6" style="width: 185px;">
-                                    	<span id="mail_check_warn"></span>
+                                    	
                                     </div>
                             </td>
                         </tr>
@@ -357,7 +350,7 @@ div.btn_area {
               </div>
                 <div class="btn_area">
                     <span class="btn b_ok">
-                        <button type="submit" href="$" class="button"><a>수정</a></button>
+                        <button type="submit" href="$" class="button" id="update" style="border: none;"><a>수정</a></button>
                     </span>
                 </div>
         </form>
@@ -430,7 +423,10 @@ div.btn_area {
 
       // update로 보내기
       //회원정보 수정 요청 검사 스크립트
-      
+      document.getElementById('update').onclick = () => {
+          alert('정상 수정되었습니다.');
+      }
+    
       
     </script>
 
