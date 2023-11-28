@@ -58,6 +58,9 @@ public class FestivalController {
 //	@GetMapping("/ftvNum")
 //	@ResponseBody
 //	public int getFtvNum(@RequestBody )
+	
+	//댓글 등록 요청
+	
 
 }
 

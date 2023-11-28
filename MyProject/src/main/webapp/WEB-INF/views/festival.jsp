@@ -10,6 +10,7 @@ pageEncoding="UTF-8"%> <%@ include file="./include/header.jsp" %>
       href="./bootstrapt/css/bootstrap.min.css"
     />
     <script src="./bootstrapt/js/bootstrap.min.js"></script> -->
+
     <!-- 합쳐지고 최소화된 최신 CSS -->
     <link
       rel="stylesheet"
@@ -427,6 +428,82 @@ pageEncoding="UTF-8"%> <%@ include file="./include/header.jsp" %>
     .modal-inner p {
       margin: 0px;
     }
+    /* 댓글창 스타일 */
+    #form-commentInfo {
+      width: 100%;
+      margin-left: 20px;
+      display: none;
+    }
+
+    #comment-count {
+      margin-bottom: 10px;
+    }
+
+    #comment-input {
+      width: 50%;
+      height: 3.3em;
+    }
+
+    #submit {
+      background-color: rgb(0, 128, 255);
+      width: 5.5em;
+      height: 3.3em;
+      font-size: 15px;
+      font-weight: bold;
+      color: aliceblue;
+      border-radius: 10px;
+      border: none;
+    }
+
+    #voteUp,
+    #voteDown {
+      width: 3.5em;
+      height: 1.9em;
+      background-color: aqua;
+    }
+
+    #comments {
+      /* 댓글 목록 */
+      margin-top: 10px;
+    }
+
+    .eachComment {
+      width: 50%;
+      margin: 10px;
+      padding: 0.5em;
+      border-bottom: 1px solid #c1bcba;
+    }
+
+    .eachComment .name {
+      font-size: 1.5em;
+      font-weight: bold;
+      margin-bottom: 0.3em;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .eachComment .inputValue {
+      font-size: 1.2em;
+      font-style: italic;
+    }
+
+    .eachComment .time {
+      font-size: 0.7em;
+      color: #c1bcba;
+      font-style: oblique;
+      margin-top: 0.5em;
+      margin-bottom: 0.5em;
+    }
+
+    .eachComment .voteDiv {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .eachComment .deleteComment {
+      background-color: red;
+      color: aliceblue;
+    }
   </style>
 
   <body>
@@ -542,22 +619,6 @@ pageEncoding="UTF-8"%> <%@ include file="./include/header.jsp" %>
             >
               축제내용
             </div>
-            <!-- <label
-        for="url"
-        class="col-form-label"
-        >홈페이지:</label
-      >
-      <div
-        class="mb-3"
-        id="urlBox"
-      >
-        <a
-          id="url"
-          href="##"
-          target="_blank"
-          ><span id="aContent"></span
-        ></a>
-      </div> -->
           </div>
           <div class="link-inner">
             <a
@@ -566,7 +627,11 @@ pageEncoding="UTF-8"%> <%@ include file="./include/header.jsp" %>
               ><i class="glyphicon glyphicon-thumbs-up"></i>좋아요</a
             >
             <!-- src\main\webapp\resources\static\img\like.png -->
-            <a href="##"><i class="glyphicon glyphicon-comment"></i>댓글달기</a>
+            <a
+              href="##"
+              id="comment"
+              ><i class="glyphicon glyphicon-comment"></i>댓글달기</a
+            >
             <a
               id="share"
               data-ftvNumForShare="1"
@@ -574,6 +639,18 @@ pageEncoding="UTF-8"%> <%@ include file="./include/header.jsp" %>
               ><i class="glyphicon glyphicon-share-alt"></i>공유하기</a
             >
           </div>
+
+          <!-- 댓글창 -->
+          <div id="form-commentInfo">
+            <div id="comment-count">댓글 <span id="count">0</span></div>
+            <input
+              id="comment-input"
+              placeholder="댓글을 입력해 주세요."
+            />
+            <button id="submit">등록</button>
+          </div>
+          <div id="comments"></div>
+
           <div class="modal-footer">
             <a
               class="btn"
@@ -595,15 +672,15 @@ pageEncoding="UTF-8"%> <%@ include file="./include/header.jsp" %>
     </div>
 
     <script
-      type="text/javascript"
-      src="//dapi.kakao.com/v2/maps/sdk.js?appkey=5c6f403205c2f67b836ea3a0e1fc26f5&libraries=services,clusterer,drawing"
-    ></script>
-    <script
       src="https://code.jquery.com/jquery-3.7.0.min.js"
       integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g="
       crossorigin="anonymous"
     ></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script
+      type="text/javascript"
+      src="//dapi.kakao.com/v2/maps/sdk.js?appkey=a5c28d99bb31ae88bf5a825a4fd77ac6&libraries=services,clusterer,drawing"
+    ></script>
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script> -->
     <script src="../../resources/static/js/bootstrap.js"></script>
     <!-- 카카오 공유하기 api -->
     <script
@@ -664,6 +741,7 @@ pageEncoding="UTF-8"%> <%@ include file="./include/header.jsp" %>
       console.log('listMarker: ', listMarker);
       var marker;
       var content = '';
+
       const deleteMarker = () => {
         for (var i = 0; i < listMarker.length; i++) {
           console.log('delete marker!');
@@ -680,7 +758,7 @@ pageEncoding="UTF-8"%> <%@ include file="./include/header.jsp" %>
       });
 
       //줌 전역으로?
-      //폴리곤 표시
+      /***************************************** 폴리곤 표시 *********************************************/
       function displayArea(coordinates, name) {
         var polygonPath = [];
         $.each(coordinates[0], function (i, coordinate) {
@@ -858,11 +936,6 @@ pageEncoding="UTF-8"%> <%@ include file="./include/header.jsp" %>
                             data[i].phone;
                           document.getElementById('content').textContent =
                             data[i].ftvContent;
-                          // document
-                          //   .getElementById('url')
-                          //   .setAttribute('href', data[i].url);
-                          // document.getElementById('aContent').textContent =
-                          //   data[i].url;
 
                           //data 묻히기
                           document
@@ -878,7 +951,17 @@ pageEncoding="UTF-8"%> <%@ include file="./include/header.jsp" %>
                           document.getElementById('modalY').textContent =
                             '축제 상세보기';
 
+                          jQuery.noConflict();
                           $('#testModal').modal('show');
+
+                          document.getElementById('modalY').onclick = function (
+                            e
+                          ) {
+                            if (data[i].url === null) {
+                              alert('해당 링크가 존재하지 않습니다.');
+                              e.preventDefault();
+                            }
+                          };
 
                           document
                             .getElementById('share')
@@ -925,9 +1008,26 @@ pageEncoding="UTF-8"%> <%@ include file="./include/header.jsp" %>
                                 },
                               ],
                             });
-                          }
+                          } // shareMessage() 끝
+
+                          /*댓글달기 눌렀을때 이벤트*/
+                          document
+                            .getElementById('comment')
+                            .addEventListener('click', (e) => {
+                              document.getElementById(
+                                'form-commentInfo'
+                              ).style.display = 'block';
+
+                              commentContent =
+                                document.getElementById('comment-input').value;
+
+                              if ('${login}') {
+                                //로그인한 경우
+                              } else {
+                              }
+                            }); // 댓글달기 클릭 이벤트 끝
                         }
-                      );
+                      ); // 마커 클릭 이벤트 끝
 
                       // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
                       // map.setCenter(coords);
@@ -940,7 +1040,7 @@ pageEncoding="UTF-8"%> <%@ include file="./include/header.jsp" %>
         }); // 폴리곤 클릭 이벤트 끝
       } // displayArea() end
 
-      // 폴리곤 생성!!!!!!!!!
+      /************************************** 폴리곤 생성!!!!!!!!! ************************************************/
       function init(path) {
         //path 경로의 json 파일 파싱
         $.getJSON(path, function (geojson) {
@@ -974,7 +1074,7 @@ pageEncoding="UTF-8"%> <%@ include file="./include/header.jsp" %>
         // init 안
       } // init() end
 
-      // 모든 폴리곤을 지우는 함수
+      /********************************* 모든 폴리곤을 지우는 함수 *********************************************/
       function removePolygon() {
         for (let i = 0; i < polygons.length; i++) {
           polygons[i].setMap(null);
@@ -999,6 +1099,7 @@ pageEncoding="UTF-8"%> <%@ include file="./include/header.jsp" %>
       /*************************************** 축제명 검색 이벤트 ****************************************/
       // 장소 검색 객체를 생성합니다
       var ps = new kakao.maps.services.Places();
+      let commentContent;
 
       // 검색창 구현
       let filterValue;
@@ -1133,11 +1234,14 @@ pageEncoding="UTF-8"%> <%@ include file="./include/header.jsp" %>
                               data[i].phone;
                             document.getElementById('content').textContent =
                               data[i].ftvContent;
-                            // document
-                            //   .getElementById('url')
-                            //   .setAttribute('href', data[i].url);
-                            // document.getElementById('aContent').textContent =
-                            //   data[i].url;
+
+                            //data 묻히기
+                            document
+                              .getElementById('share')
+                              .setAttribute(
+                                'data-ftvNumForShare',
+                                data[i].ftvNum
+                              );
 
                             document
                               .getElementById('modalY')
@@ -1146,6 +1250,62 @@ pageEncoding="UTF-8"%> <%@ include file="./include/header.jsp" %>
                               '축제 상세보기';
 
                             $('#testModal').modal('show');
+
+                            document.getElementById('modalY').onclick =
+                              function (e) {
+                                if (data[i].url === null) {
+                                  alert('해당 링크가 존재하지 않습니다.');
+                                  e.preventDefault();
+                                }
+                              };
+
+                            document
+                              .getElementById('share')
+                              .addEventListener('click', (e) => {
+                                //모달 안의 공유하기 버튼 눌렀을 때 이벤트
+                                const bno =
+                                  document.getElementById('share').dataset
+                                    .ftvNumForShare;
+                                console.log('bno: ', bno);
+                                shareMessage();
+                              });
+
+                            // overlay.setMap(map);
+                            getFtvNum = data[i].ftvNum;
+
+                            /* 카카오 공유하기 */
+                            function shareMessage() {
+                              Kakao.Share.sendDefault({
+                                objectType: 'location',
+                                address: data[i].roadAddr,
+                                addressTitle: data[i].roadAddr,
+                                content: {
+                                  title: data[i].ftvName,
+                                  description: data[i].roadAddr,
+                                  imageUrl:
+                                    '/resources/static/img/shareImg.png',
+                                  link: {
+                                    // [내 애플리케이션] > [플랫폼] 에서 등록한 사이트 도메인과 일치해야 함
+                                    mobileWebUrl: 'http://localhost',
+                                    webUrl: 'http://localhost',
+                                  },
+                                },
+                                social: {
+                                  likeCount: 286,
+                                  commentCount: 45,
+                                  sharedCount: 845,
+                                },
+                                buttons: [
+                                  {
+                                    title: '전국 축제 확인하기',
+                                    link: {
+                                      mobileWebUrl: 'http://localhost',
+                                      webUrl: 'http://localhost',
+                                    },
+                                  },
+                                ],
+                              });
+                            } // shareMessage() 끝
                           }
                         ); // 마커 클릭 이벤트 끝
                       }
@@ -1158,23 +1318,6 @@ pageEncoding="UTF-8"%> <%@ include file="./include/header.jsp" %>
               }); // .then(data) 끝
           } // if OK 끝
         } // placesSearchCB함수 끝
-
-        // 지도에 마커를 표시하는 함수입니다
-        function displayMarker(place) {
-          // // 마커를 생성하고 지도에 표시합니다
-          // var marker = new kakao.maps.Marker({
-          //   map: map,
-          //   position: new kakao.maps.LatLng(place.latitude, place.longitude),
-          // });
-          // // 마커에 클릭이벤트를 등록합니다
-          // kakao.maps.event.addListener(marker, 'click', function () {
-          //   // 마커를 클릭하면 장소명이 인포윈도우에 표출됩니다
-          //   console.log('검색하고 마커 클릭!!');
-          //   // overlay.setMap(map);
-          //   // infowindow.open(map, marker);
-          // }); // 마커 클릭 이벤트 끝
-          //
-        } // displayMarker함수 끝
       } // searchMarker함수 끝
 
       /*****************************************계절 버튼 클릭 이벤트***********************************/
@@ -1254,11 +1397,11 @@ pageEncoding="UTF-8"%> <%@ include file="./include/header.jsp" %>
                         data[i].phone;
                       document.getElementById('content').textContent =
                         data[i].ftvContent;
-                      // document
-                      //   .getElementById('url')
-                      //   .setAttribute('href', data[i].url);
-                      // document.getElementById('aContent').textContent =
-                      //   data[i].url;
+
+                      //data 묻히기
+                      document
+                        .getElementById('share')
+                        .setAttribute('data-ftvNumForShare', data[i].ftvNum);
 
                       document
                         .getElementById('modalY')
@@ -1266,7 +1409,62 @@ pageEncoding="UTF-8"%> <%@ include file="./include/header.jsp" %>
                       document.getElementById('modalY').textContent =
                         '축제 상세보기';
 
+                      jQuery.noConflict();
                       $('#testModal').modal('show');
+
+                      document.getElementById('modalY').onclick = function (e) {
+                        if (data[i].url === null) {
+                          alert('해당 링크가 존재하지 않습니다.');
+                          e.preventDefault();
+                        }
+                      };
+
+                      document
+                        .getElementById('share')
+                        .addEventListener('click', (e) => {
+                          //모달 안의 공유하기 버튼 눌렀을 때 이벤트
+                          const bno =
+                            document.getElementById('share').dataset
+                              .ftvNumForShare;
+                          console.log('bno: ', bno);
+                          shareMessage();
+                        });
+
+                      // overlay.setMap(map);
+                      getFtvNum = data[i].ftvNum;
+
+                      /* 카카오 공유하기 */
+                      function shareMessage() {
+                        Kakao.Share.sendDefault({
+                          objectType: 'location',
+                          address: data[i].roadAddr,
+                          addressTitle: data[i].roadAddr,
+                          content: {
+                            title: data[i].ftvName,
+                            description: data[i].roadAddr,
+                            imageUrl: '/resources/static/img/shareImg.png',
+                            link: {
+                              // [내 애플리케이션] > [플랫폼] 에서 등록한 사이트 도메인과 일치해야 함
+                              mobileWebUrl: 'http://localhost',
+                              webUrl: 'http://localhost',
+                            },
+                          },
+                          social: {
+                            likeCount: 286,
+                            commentCount: 45,
+                            sharedCount: 845,
+                          },
+                          buttons: [
+                            {
+                              title: '전국 축제 확인하기',
+                              link: {
+                                mobileWebUrl: 'http://localhost',
+                                webUrl: 'http://localhost',
+                              },
+                            },
+                          ],
+                        });
+                      } // shareMessage() 끝
 
                       // overlay.setMap(map);
                       getFtvNum = data[i].ftvNum;
@@ -1350,11 +1548,11 @@ pageEncoding="UTF-8"%> <%@ include file="./include/header.jsp" %>
                         data[i].phone;
                       document.getElementById('content').textContent =
                         data[i].ftvContent;
-                      // document
-                      //   .getElementById('url')
-                      //   .setAttribute('href', data[i].url);
-                      // document.getElementById('aContent').textContent =
-                      //   data[i].url;
+
+                      //data 묻히기
+                      document
+                        .getElementById('share')
+                        .setAttribute('data-ftvNumForShare', data[i].ftvNum);
 
                       document
                         .getElementById('modalY')
@@ -1362,7 +1560,62 @@ pageEncoding="UTF-8"%> <%@ include file="./include/header.jsp" %>
                       document.getElementById('modalY').textContent =
                         '축제 상세보기';
 
+                      jQuery.noConflict();
                       $('#testModal').modal('show');
+
+                      document.getElementById('modalY').onclick = function (e) {
+                        if (data[i].url === null) {
+                          alert('해당 링크가 존재하지 않습니다.');
+                          e.preventDefault();
+                        }
+                      };
+
+                      document
+                        .getElementById('share')
+                        .addEventListener('click', (e) => {
+                          //모달 안의 공유하기 버튼 눌렀을 때 이벤트
+                          const bno =
+                            document.getElementById('share').dataset
+                              .ftvNumForShare;
+                          console.log('bno: ', bno);
+                          shareMessage();
+                        });
+
+                      // overlay.setMap(map);
+                      getFtvNum = data[i].ftvNum;
+
+                      /* 카카오 공유하기 */
+                      function shareMessage() {
+                        Kakao.Share.sendDefault({
+                          objectType: 'location',
+                          address: data[i].roadAddr,
+                          addressTitle: data[i].roadAddr,
+                          content: {
+                            title: data[i].ftvName,
+                            description: data[i].roadAddr,
+                            imageUrl: '/resources/static/img/shareImg.png',
+                            link: {
+                              // [내 애플리케이션] > [플랫폼] 에서 등록한 사이트 도메인과 일치해야 함
+                              mobileWebUrl: 'http://localhost',
+                              webUrl: 'http://localhost',
+                            },
+                          },
+                          social: {
+                            likeCount: 286,
+                            commentCount: 45,
+                            sharedCount: 845,
+                          },
+                          buttons: [
+                            {
+                              title: '전국 축제 확인하기',
+                              link: {
+                                mobileWebUrl: 'http://localhost',
+                                webUrl: 'http://localhost',
+                              },
+                            },
+                          ],
+                        });
+                      } // shareMessage() 끝
                     });
 
                     // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
@@ -1441,11 +1694,11 @@ pageEncoding="UTF-8"%> <%@ include file="./include/header.jsp" %>
                         data[i].phone;
                       document.getElementById('content').textContent =
                         data[i].ftvContent;
-                      // document
-                      //   .getElementById('url')
-                      //   .setAttribute('href', data[i].url);
-                      // document.getElementById('aContent').textContent =
-                      //   data[i].url;
+
+                      //data 묻히기
+                      document
+                        .getElementById('share')
+                        .setAttribute('data-ftvNumForShare', data[i].ftvNum);
 
                       document
                         .getElementById('modalY')
@@ -1453,7 +1706,62 @@ pageEncoding="UTF-8"%> <%@ include file="./include/header.jsp" %>
                       document.getElementById('modalY').textContent =
                         '축제 상세보기';
 
+                      jQuery.noConflict();
                       $('#testModal').modal('show');
+
+                      document.getElementById('modalY').onclick = function (e) {
+                        if (data[i].url === null) {
+                          alert('해당 링크가 존재하지 않습니다.');
+                          e.preventDefault();
+                        }
+                      };
+
+                      document
+                        .getElementById('share')
+                        .addEventListener('click', (e) => {
+                          //모달 안의 공유하기 버튼 눌렀을 때 이벤트
+                          const bno =
+                            document.getElementById('share').dataset
+                              .ftvNumForShare;
+                          console.log('bno: ', bno);
+                          shareMessage();
+                        });
+
+                      // overlay.setMap(map);
+                      getFtvNum = data[i].ftvNum;
+
+                      /* 카카오 공유하기 */
+                      function shareMessage() {
+                        Kakao.Share.sendDefault({
+                          objectType: 'location',
+                          address: data[i].roadAddr,
+                          addressTitle: data[i].roadAddr,
+                          content: {
+                            title: data[i].ftvName,
+                            description: data[i].roadAddr,
+                            imageUrl: '/resources/static/img/shareImg.png',
+                            link: {
+                              // [내 애플리케이션] > [플랫폼] 에서 등록한 사이트 도메인과 일치해야 함
+                              mobileWebUrl: 'http://localhost',
+                              webUrl: 'http://localhost',
+                            },
+                          },
+                          social: {
+                            likeCount: 286,
+                            commentCount: 45,
+                            sharedCount: 845,
+                          },
+                          buttons: [
+                            {
+                              title: '전국 축제 확인하기',
+                              link: {
+                                mobileWebUrl: 'http://localhost',
+                                webUrl: 'http://localhost',
+                              },
+                            },
+                          ],
+                        });
+                      } // shareMessage() 끝
                     });
 
                     // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
@@ -1532,11 +1840,11 @@ pageEncoding="UTF-8"%> <%@ include file="./include/header.jsp" %>
                         data[i].phone;
                       document.getElementById('content').textContent =
                         data[i].ftvContent;
-                      // document
-                      //   .getElementById('url')
-                      //   .setAttribute('href', data[i].url);
-                      // document.getElementById('aContent').textContent =
-                      //   data[i].url;
+
+                      //data 묻히기
+                      document
+                        .getElementById('share')
+                        .setAttribute('data-ftvNumForShare', data[i].ftvNum);
 
                       document
                         .getElementById('modalY')
@@ -1545,6 +1853,60 @@ pageEncoding="UTF-8"%> <%@ include file="./include/header.jsp" %>
                         '축제 상세보기';
 
                       $('#testModal').modal('show');
+
+                      document.getElementById('modalY').onclick = function (e) {
+                        if (data[i].url === null) {
+                          alert('해당 링크가 존재하지 않습니다.');
+                          e.preventDefault();
+                        }
+                      };
+
+                      document
+                        .getElementById('share')
+                        .addEventListener('click', (e) => {
+                          //모달 안의 공유하기 버튼 눌렀을 때 이벤트
+                          const bno =
+                            document.getElementById('share').dataset
+                              .ftvNumForShare;
+                          console.log('bno: ', bno);
+                          shareMessage();
+                        });
+
+                      // overlay.setMap(map);
+                      getFtvNum = data[i].ftvNum;
+
+                      /* 카카오 공유하기 */
+                      function shareMessage() {
+                        Kakao.Share.sendDefault({
+                          objectType: 'location',
+                          address: data[i].roadAddr,
+                          addressTitle: data[i].roadAddr,
+                          content: {
+                            title: data[i].ftvName,
+                            description: data[i].roadAddr,
+                            imageUrl: '/resources/static/img/shareImg.png',
+                            link: {
+                              // [내 애플리케이션] > [플랫폼] 에서 등록한 사이트 도메인과 일치해야 함
+                              mobileWebUrl: 'http://localhost',
+                              webUrl: 'http://localhost',
+                            },
+                          },
+                          social: {
+                            likeCount: 286,
+                            commentCount: 45,
+                            sharedCount: 845,
+                          },
+                          buttons: [
+                            {
+                              title: '전국 축제 확인하기',
+                              link: {
+                                mobileWebUrl: 'http://localhost',
+                                webUrl: 'http://localhost',
+                              },
+                            },
+                          ],
+                        });
+                      } // shareMessage() 끝
                     });
 
                     // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다

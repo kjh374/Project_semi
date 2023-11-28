@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-pageEncoding="UTF-8"%> <%@ taglib uri="http://java.sun.com/jsp/jstl/core"
+pageEncoding="UTF-8" %> <%@ taglib uri="http://java.sun.com/jsp/jstl/core"
 prefix="c" %>
 <!DOCTYPE html>
 <html lang="en">
@@ -19,6 +19,7 @@ prefix="c" %>
         margin: 0 auto;
         align-items: flex-end;
       }
+
       .title {
         background: transparent url('/img/logoHeader.png') no-repeat center;
         flex-grow: 3;
@@ -26,6 +27,7 @@ prefix="c" %>
         min-height: 75px;
         margin-right: 50px;
       }
+
       .popular {
         display: flex;
         background: #e8ebf1;
@@ -33,6 +35,7 @@ prefix="c" %>
         border: 1px solid lightgray;
         height: 60px;
       }
+
       .real-time {
         display: flex;
         justify-content: center;
@@ -40,15 +43,18 @@ prefix="c" %>
         flex-grow: 1;
         min-width: 200px;
       }
+
       .real-time .sound-icon {
         width: 20px;
         height: 30px;
         background: transparent url('/img/soundIcon.png') no-repeat center;
         margin-right: 10px;
       }
+
       .real-time .real-time-icon {
         font-weight: bold;
       }
+
       .fest-name {
         display: flex;
         align-items: center;
@@ -57,15 +63,18 @@ prefix="c" %>
         border-left: 3px solid rgba(204, 202, 202, 0.929);
         min-width: 200px;
       }
+
       .fest-name span {
         font-weight: bold;
       }
+
       .counter-container {
         display: flex;
         flex-direction: column;
         justify-content: center;
         padding-right: 50px;
       }
+
       .btn-area {
         display: flex;
         flex-grow: 0.5;
@@ -73,6 +82,7 @@ prefix="c" %>
         align-items: center;
         margin-left: 44px;
       }
+
       .btn-area > .botton {
         width: 14rem;
         padding: 0px;
@@ -85,7 +95,7 @@ prefix="c" %>
       }
 
       .btn-area .btn {
-        /* background-color: #0356a9; */
+        background-color: #0356a9;
         color: white;
         line-height: 30px;
         width: 100px;
@@ -95,17 +105,20 @@ prefix="c" %>
         text-align: center;
         text-decoration: none;
       }
+
       .btn-area .like {
         background: url('/img/like.png') no-repeat center;
         text-indent: -9999px;
         margin-bottom: 7px;
         /* border: 1px solid black; */
       }
+
       .btn-area .like:hover {
         background: url('/img/likeDarker.png') no-repeat center;
         text-indent: -9999px;
         margin-bottom: 7px;
       }
+
       .login-btn {
         margin-bottom: 7px;
         padding: 3px;
@@ -119,9 +132,11 @@ prefix="c" %>
           #a1c4fd 100%
         );
       }
+
       .login-btn:hover {
         background-position: right center;
       }
+
       .join-btn {
         margin-bottom: 7px;
         padding: 3px;
@@ -135,15 +150,13 @@ prefix="c" %>
           #a1c4fd 100%
         );
       }
+
       .join-btn:hover {
         background-position: right center;
       }
 
       /*****모달창*****/
-      * {
-        margin: 0;
-        padding: 0;
-      }
+
       a.button {
         display: inline-block;
         padding: 10px 20px;
@@ -152,6 +165,7 @@ prefix="c" %>
         background: #000;
         margin: 20px;
       }
+
       #modal {
         display: none;
         position: fixed;
@@ -161,6 +175,7 @@ prefix="c" %>
         left: 0;
         background: rgba(0, 0, 0, 0.3);
       }
+
       .modal-con {
         display: none;
         position: fixed;
@@ -171,16 +186,19 @@ prefix="c" %>
         height: 500px;
         background: #fff;
       }
+
       .modal-header {
         font-size: 20px;
         padding: 20px;
         background: skyblue;
       }
+
       .modal-con .con {
         font-size: 15px;
         line-height: 1.3;
         padding: 30px;
       }
+
       .modal-con .close {
         display: block;
         position: absolute;
@@ -204,6 +222,38 @@ prefix="c" %>
 
       .likeBtn {
         text-decoration: none;
+      }
+      /* 무한 스크롤*/
+      #ftvModalSty {
+        border-bottom: 1px solid #ddd;
+        padding-top: 5px;
+        padding-bottom: 15px;
+      }
+      #ftvName {
+        margin-top: 5px;
+      }
+      #ftvUrl {
+        text-decoration-line: none;
+      }
+      #ftvUrl:hover {
+        color: black;
+      }
+
+      #container {
+        border: 1px solid #ddd;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .item {
+        border: 1px solid #ccc;
+        margin: 10px 0;
+        padding: 10px;
+      }
+      #contentDiv {
+        height: 50vh;
+        overflow-y: auto;
       }
     </style>
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
@@ -1851,45 +1901,16 @@ prefix="c" %>
         1532: '2023 가족의 달 어린이축제',
         1533: '무의도 춤축제',
       };
-      // 헤더 랜덤 축제에 관련된 변수
-      var quote = document.getElementById('quote');
-      var btn = document.getElementById('increase');
-      var btn2 = document.getElementById('decrease');
+      function showRandomFestival() {
+        const randomNumber =
+          Math.floor(Math.random() * Object.keys(festivalNames).length) + 1;
+        const festivalName = festivalNames[randomNumber];
+        document.getElementById('festivalName').textContent = festivalName;
+      }
 
-      // 축제 배열로 담은 것
-      var arr = [
-        {
-          quote: '축제1',
-        },
-        {
-          quote: '축제2',
-        },
-        {
-          quote: '축제3',
-        },
-        {
-          quote: '축제4',
-        },
-        {
-          quote: '축제5',
-        },
-      ];
-
-      //버튼 눌렀을 때 arr 배열 안의 축제 랜덤으로 출력 btn
-      btn.addEventListener('click', function () {
-        var random = Math.floor(Math.random() * arr.length);
-
-        quote.textContent = arr[random].quote;
-      });
-
-      //버튼 눌렀을 때 arr 배열 안의 축제 랜덤으로 출력 btn2
-      btn2.addEventListener('click', function () {
-        var random = Math.floor(Math.random() * arr.length);
-
-        quote.textContent = arr[random].quote;
-      });
-
-      let str = '';
+      // 페이지 로딩 후 5초마다 데이터 랜덤으로 표시
+      showRandomFestival();
+      setInterval(showRandomFestival, 2000); // 5000 밀리초(5초)
 
       document.querySelector('.like').onclick = () => {
         fetch('${pageContext.request.contextPath}/user/likeList/' + `${login}`)
@@ -1903,17 +1924,6 @@ prefix="c" %>
             document.querySelector('.ftv').insertAdjacentHTML('beforeend', str);
           });
       };
-      ///실시간 데이탕
-      function showRandomFestival() {
-        const randomNumber =
-          Math.floor(Math.random() * Object.keys(festivalNames).length) + 1;
-        const festivalName = festivalNames[randomNumber];
-        document.getElementById('festivalName').textContent = festivalName;
-      }
-
-      // 페이지 로딩 후 5초마다 데이터 랜덤으로 표시
-      showRandomFestival();
-      setInterval(showRandomFestival, 2000); // 5000 밀리초(5초)
     </script>
   </body>
 </html>
